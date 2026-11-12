@@ -187,7 +187,7 @@ anterior. Los pasos marcados **(Usuario)** los ejecuta el usuario.
     `UserSecretsId` al `.csproj`)
   - `dotnet user-secrets set "ConnectionStrings:BonusTest" "<cadena con sa>"`
   - Restaurar en `appsettings.json` la cadena original (`Trusted_Connection`)
-- [ ] **7.2** `README.md`: cómo levantar (BD 01 + 02, User Secrets, API, front),
+- [x] **7.2** `README.md`: cómo levantar (BD 01 + 02, User Secrets, API, front),
       decisiones técnicas (foto de sueldo/retención, índice único filtrado,
       cálculo en Domain, paginación en BD) y pendientes.
 
