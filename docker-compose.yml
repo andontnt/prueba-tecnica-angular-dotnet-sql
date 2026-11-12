@@ -1,0 +1,23 @@
+services:
+  backend:
+    build:
+      context: ./backend/src
+      dockerfile: Dockerfile
+    container_name: bonustest-backend
+    ports:
+      - '5106:8080'
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: bonustest-frontend
+    ports:
+      - '4200:80'
+    depends_on:
+      - backend
+    restart: unless-stopped
