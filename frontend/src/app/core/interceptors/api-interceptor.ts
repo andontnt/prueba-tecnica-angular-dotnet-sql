@@ -17,7 +17,10 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
       if (error.status === 409) {
         notification.show('warning', error.error?.description ?? 'La operación no es válida.');
       } else {
-        notification.show('error', 'El servicio no está disponible o respondió con un error. Intenta nuevamente.');
+        notification.show(
+          'error',
+          'El servicio no está disponible o respondió con un error. Intenta nuevamente.',
+        );
       }
       return throwError(() => error);
     }),

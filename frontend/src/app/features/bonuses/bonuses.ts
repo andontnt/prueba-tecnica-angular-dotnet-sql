@@ -17,5 +17,7 @@ export class Bonuses {
   private readonly catalogApi = inject(CatalogApi);
 
   protected readonly departments = toSignal(this.catalogApi.getDepartments(), { initialValue: [] });
-  protected readonly bonusStates = toSignal(this.catalogApi.getStates(MasterStateCodes.Bonus), { initialValue: [] });
+  protected readonly bonusStates = toSignal(this.catalogApi.getStates(MasterStateCodes.Bonus), {
+    initialValue: [],
+  });
 }
