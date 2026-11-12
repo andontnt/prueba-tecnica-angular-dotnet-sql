@@ -1,33 +1,47 @@
 <section class="card">
   <header class="card-header">
     <h2>Bonos de desempeño</h2>
-    <button type="button" class="btn btn-primary" disabled>Nuevo registro</button>
+    <button mat-flat-button type="button" disabled>Nuevo registro</button>
   </header>
 
-  <div class="filters">
-    <label>
-      Área
-      <select>
-        <option value="">Todas</option>
+  <form class="filters" [formGroup]="filters" (ngSubmit)="search()">
+    <mat-form-field>
+      <mat-label>Área</mat-label>
+      <mat-select formControlName="departmentCode">
+        <mat-option value="">Todas</mat-option>
         @for (department of departments(); track department.departmentCode) {
-          <option [value]="department.departmentCode">{{ department.departmentName }}</option>
+          <mat-option [value]="department.departmentCode">
+            {{ department.departmentName }}
+          </mat-option>
         }
-      </select>
-    </label>
+      </mat-select>
+    </mat-form-field>
 
-    <label>
-      Estado
-      <select>
-        <option value="">Todos</option>
+    <mat-form-field>
+      <mat-label>Número de empleado</mat-label>
+      <input matInput type="number" min="1" formControlName="employeeNumber" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Periodo</mat-label>
+      <input matInput type="month" formControlName="period" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="stateCode">
+        <mat-option value="">Todos</mat-option>
         @for (state of bonusStates(); track state.stateCode) {
-          <option [value]="state.stateCode">{{ state.stateDescription }}</option>
+          <mat-option [value]="state.stateCode">{{ state.stateDescription }}</mat-option>
         }
-      </select>
-    </label>
-  </div>
+      </mat-select>
+    </mat-form-field>
 
-  <p class="placeholder">
-    Los combos ya consumen <code>GET /api/v1/Catalog</code>. Implementa aquí el listado paginado,
-    las acciones por fila y el modal de registro descritos en el enunciado.
-  </p>
+    <div class="filter-actions">
+      <button mat-flat-button type="submit">Buscar</button>
+      <button mat-stroked-button type="button" (click)="clear()">Limpiar</button>
+    </div>
+  </form>
+
+  <p class="placeholder">Total de registros: {{ bonuses()?.totalRecords ?? 0 }}</p>
 </section>

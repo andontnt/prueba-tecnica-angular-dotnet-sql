@@ -12,16 +12,19 @@
 .filters {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 16px;
   margin-bottom: 16px;
 }
 
-.filters label {
+.filters mat-form-field {
+  flex: 1;
+  min-width: 160px;
+}
+
+.filter-actions {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
+  gap: 8px;
 }
 
 .placeholder {
