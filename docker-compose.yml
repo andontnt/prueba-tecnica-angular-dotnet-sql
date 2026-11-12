@@ -9,6 +9,9 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__BonusTest:
+        'Server=host.containers.internal,1433;Database=BonusTest;User
+        Id=sa;Password=Password2026;TrustServerCertificate=True;'
     restart: unless-stopped
 
   frontend:
