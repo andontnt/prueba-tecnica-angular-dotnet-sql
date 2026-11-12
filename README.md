@@ -13,6 +13,26 @@ neto a pagar.
 
 ## Cómo levantar el proyecto
 
+### Usando Podman
+
+```bash
+# Iniciar SQL Server
+scripts/bonus.sh db
+scripts/bonus.sh start
+
+# Levantar frontend y backend
+podman compose up -d
+
+# Verificar contenedores en ejecución
+podman ps
+
+# Consultar logs
+podman compose logs -f
+
+# Detener frontend y backend
+podman compose down
+```
+
 ### Requisitos
 
 - Podman (o Docker, cambiando `podman` por `docker` en `scripts/bonus.sh`)
@@ -34,8 +54,8 @@ Si el contenedor ya existe (por ejemplo, después de reiniciar la máquina):
 ./scripts/bonus.sh start
 ```
 
-Los scripts `01`, `02` y `03` se ejecutan una sola vez, en ese orden: si las tablas ya existen,
-fallan.
+Los scripts `01`, `02` y `03` se ejecutan una sola vez, en ese orden: si las
+tablas ya existen, fallan.
 
 ### 2. API
 
@@ -94,12 +114,13 @@ Los errores de reglas de negocio responden **409** con `{ code, description }`.
 - **CHECK constraints** como última línea de defensa: formato del periodo,
   valores según el tipo, neto = bruto - retención, solo estados de bono y
   `DeletedAt` / `DeletedBy` siempre juntos.
-- **Reparto del pago en `BonusProjectDistribution`** (`03_bonus_project_distribution.sql`):
-  una línea por proyecto con FK a `Bonus` y a `EmployeeProjectHours`. Guarda el
-  nombre del proyecto y las horas del momento del pago (igual que el sueldo en
-  `Bonus`), porque `EmployeeProjectHours` solo tiene las horas del último mes.
-  Índice único `(BonusId, EmployeeProjectHoursId)`: un proyecto una sola vez por
-  bono, y sirve para leer el detalle de un bono.
+- **Reparto del pago en `BonusProjectDistribution`**
+  (`03_bonus_project_distribution.sql`): una línea por proyecto con FK a `Bonus`
+  y a `EmployeeProjectHours`. Guarda el nombre del proyecto y las horas del
+  momento del pago (igual que el sueldo en `Bonus`), porque
+  `EmployeeProjectHours` solo tiene las horas del último mes. Índice único
+  `(BonusId, EmployeeProjectHoursId)`: un proyecto una sola vez por bono, y
+  sirve para leer el detalle de un bono.
 - Enfoque **database-first**: las tablas se crean con los scripts SQL y EF Core
   solo las mapea (sin migraciones).
 
@@ -111,16 +132,16 @@ Los errores de reglas de negocio responden **409** con `{ code, description }`.
   recibe la petición y delega. El cálculo vive en la entidad
   (`Bonus.CalculateAmounts()`), con redondeo a 2 decimales y el medio hacia
   arriba (`Money.Round`, `MidpointRounding.AwayFromZero`).
-- **El monto o porcentaje ingresado se redondea a 2 decimales antes de
-  validar** (`0.125` -> `0.13`): así el valor que se valida, se calcula y se
-  guarda en `BonusValue` (`DECIMAL(16,2)`) es siempre el mismo.
+- **El monto o porcentaje ingresado se redondea a 2 decimales antes de validar**
+  (`0.125` -> `0.13`): así el valor que se valida, se calcula y se guarda en
+  `BonusValue` (`DECIMAL(16,2)`) es siempre el mismo.
 - **Pago del bono** (`Bonus.Pay()` en Domain): reparte el bruto entre los
-  proyectos en proporción a las horas. Cada línea se redondea a 2 decimales y
-  el último proyecto (ordenados por `EmployeeProjectHoursId`) recibe la
-  diferencia para cuadrar exacto; con un solo proyecto recibe todo. Ejemplo
-  TECH1-102 (45 / 35 / 20 h), bruto 333.33 -> 150.00 / 116.67 / 66.66. El
-  detalle y el cambio a Pagado (0202) se guardan en un solo `SaveChangesAsync`,
-  que EF Core ejecuta en una transacción.
+  proyectos en proporción a las horas. Cada línea se redondea a 2 decimales y el
+  último proyecto (ordenados por `EmployeeProjectHoursId`) recibe la diferencia
+  para cuadrar exacto; con un solo proyecto recibe todo. Ejemplo TECH1-102 (45 /
+  35 / 20 h), bruto 333.33 -> 150.00 / 116.67 / 66.66. El detalle y el cambio a
+  Pagado (0202) se guardan en un solo `SaveChangesAsync`, que EF Core ejecuta en
+  una transacción.
 - **Un repositorio por módulo** (`IBonusRepository`), como `ICatalogRepository`
   en el proyecto base: incluye la lectura del empleado que necesita el registro.
 - **Paginación en la base de datos:** filtros opcionales, `CountAsync` y `Skip`
@@ -142,20 +163,3 @@ Los errores de reglas de negocio responden **409** con `{ code, description }`.
   anular y eliminar; las acciones solo se habilitan en estado Registrado.
 - Los errores 409 los muestra el interceptor del proyecto base; los componentes
   no repiten ese manejo.
-
-## Pendientes y posibles mejoras
-
-- **Rendimiento del listado con muchos registros:** hoy los filtros del listado
-  no usan un índice (el índice único solo cubre bonos activos). Se podría
-  agregar `(Period, BonusStateCode) WHERE DeletedAt IS NULL` y evaluar
-  paginación por cursor en lugar de `OFFSET`.
-- **Secretos:** la cadena de conexión con la contraseña está en
-  `appsettings.json`; lo correcto es moverla a User Secrets o variables de
-  entorno.
-- Si dos registros del mismo bono llegan al mismo tiempo, el índice único evita
-  el duplicado, pero la API responde 500 en lugar de 409.
-- Los textos del paginador están en inglés (se traducen con `MatPaginatorIntl`).
-- La pantalla no muestra el detalle del reparto de un bono pagado (queda en
-  `BonusProjectDistribution`).
-- Puntos extra no implementados: pruebas unitarias del cálculo y levantar todo
-  con `podman compose`.
