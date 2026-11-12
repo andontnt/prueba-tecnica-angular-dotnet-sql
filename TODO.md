@@ -170,7 +170,7 @@ anterior. Los pasos marcados **(Usuario)** los ejecuta el usuario.
     activos)
   - Vista previa de bruto / retención / neto mientras escribe
   - Guardar -> al éxito emite `saved`, cierra y el padre refresca el listado
-- [ ] **6.6** **(Usuario)** Levantar el front (`npm start`) y probar el flujo
+- [x] **6.6** **(Usuario)** Levantar el front (`npm start`) y probar el flujo
       completo.
 
 ## Fase 7 - Entrega
