@@ -1,4 +1,5 @@
 using System.Globalization;
+using BonusTest.Application.Common;
 using BonusTest.Domain.Constants;
 using BonusTest.Domain.Entities;
 using BonusTest.Domain.Exceptions;
@@ -7,6 +8,9 @@ namespace BonusTest.Application.Bonuses;
 
 public class BonusService(IBonusRepository repository)
 {
+    public Task<PagedResponse<BonusListItemDto>> GetPagedAsync(BonusFilter filter, CancellationToken cancellationToken) =>
+        repository.GetPagedAsync(filter, cancellationToken);
+
     public async Task<EmployeeDto> GetEmployeeAsync(string departmentCode, int employeeNumber, CancellationToken cancellationToken)
     {
         var employee = await GetActiveEmployeeAsync(departmentCode, employeeNumber, cancellationToken);
