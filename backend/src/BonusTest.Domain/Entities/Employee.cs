@@ -7,9 +7,11 @@ public class Employee
     public string FullName { get; set; } = null!;
     public DateTime HireDate { get; set; }
     public decimal MonthlySalary { get; set; }
+
     /// <summary>Porcentaje de retención que se aplica a sus bonos (0, 8 o 10).</summary>
     public decimal TaxRate { get; set; }
     public string EmployeeStateCode { get; set; } = null!;
 
+    public Department Department { get; set; } = null!;
     public List<EmployeeProjectHours> ProjectHours { get; set; } = [];
 }

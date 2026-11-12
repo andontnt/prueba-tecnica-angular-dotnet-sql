@@ -1,3 +1,5 @@
+using BonusTest.Domain.Constants;
+
 namespace BonusTest.Domain.Entities;
 
 public class Bonus
@@ -21,4 +23,24 @@ public class Bonus
     public DateTime? ModifiedAt { get; set; }
     public string? DeletedBy { get; set; }
     public DateTime? DeletedAt { get; set; }
+
+    public Employee Employee { get; set; } = null!;
+    public BonusType BonusType { get; set; } = null!;
+    public BonusReason Reason { get; set; } = null!;
+    public State State { get; set; } = null!;
+
+    /// <summary>
+    /// Calcula bruto, retención y neto con el sueldo y la retención guardados en el bono.
+    /// </summary>
+    public void CalculateAmounts()
+    {
+        GrossAmount = Round(BonusTypeId == BonusTypes.FixedAmount
+            ? BonusValue
+            : MonthlySalary * BonusValue / 100);
+        TaxAmount = Round(GrossAmount * TaxRate / 100);
+        NetAmount = GrossAmount - TaxAmount;
+    }
+
+    // Redondeo a 2 decimales con el medio hacia arriba: 0.125 -> 0.13.
+    private static decimal Round(decimal value) => Math.Round(value, 2, MidpointRounding.AwayFromZero);
 }
