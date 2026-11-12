@@ -27,6 +27,12 @@ public class BonusRepository(AppDbContext context) : IBonusRepository
             && x.DeletedAt == null
             && x.BonusStateCode != BonusStates.Cancelled, cancellationToken);
 
+    public async Task<IReadOnlyList<EmployeeProjectHours>> GetProjectHoursAsync(
+        string departmentCode, int employeeNumber, CancellationToken cancellationToken) =>
+        await context.EmployeeProjectHours.AsNoTracking()
+            .Where(x => x.DepartmentCode == departmentCode && x.EmployeeNumber == employeeNumber)
+            .ToListAsync(cancellationToken);
+
     public Task<Bonus?> GetByIdAsync(int bonusId, CancellationToken cancellationToken) =>
         context.Bonuses.FirstOrDefaultAsync(x => x.BonusId == bonusId, cancellationToken);
 
