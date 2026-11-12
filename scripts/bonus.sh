@@ -14,6 +14,10 @@ case "$1" in
       mcr.microsoft.com/mssql/server:2022-latest
     ;;
 
+  start)
+    podman start bonustest-sql
+    ;;
+
   seed)
     podman cp "${ROOT_DIR}/database/01_schema_seed.sql" bonustest-sql:/tmp/01_schema_seed.sql
     podman exec bonustest-sql /opt/mssql-tools18/bin/sqlcmd -C -S localhost \
@@ -27,6 +31,6 @@ case "$1" in
     ;;
 
   *)
-    echo "Uso: $0 {db|seed|bonus}"
+    echo "Uso: $0 {db|start|seed|bonus}"
     ;;
 esac
