@@ -36,6 +36,11 @@
   white-space: nowrap;
 }
 
+.actions {
+  width: 48px;
+  text-align: right;
+}
+
 .empty {
   padding: 24px 16px;
   text-align: center;
