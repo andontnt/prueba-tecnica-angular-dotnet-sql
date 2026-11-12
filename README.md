@@ -102,7 +102,10 @@ Los errores de reglas de negocio responden **409** con `{ code, description }`.
 - **Reglas de negocio en `BonusService`** (Application); el controlador solo
   recibe la petición y delega. El cálculo vive en la entidad
   (`Bonus.CalculateAmounts()`), con redondeo a 2 decimales y el medio hacia
-  arriba (`MidpointRounding.AwayFromZero`).
+  arriba (`Money.Round`, `MidpointRounding.AwayFromZero`).
+- **El monto o porcentaje ingresado se redondea a 2 decimales antes de
+  validar** (`0.125` -> `0.13`): así el valor que se valida, se calcula y se
+  guarda en `BonusValue` (`DECIMAL(16,2)`) es siempre el mismo.
 - **Un repositorio por módulo** (`IBonusRepository`), como `ICatalogRepository`
   en el proyecto base: incluye la lectura del empleado que necesita el registro.
 - **Paginación en la base de datos:** filtros opcionales, `CountAsync` y `Skip`

@@ -76,10 +76,10 @@ export class BonusFormDialog {
       return null;
     }
 
+    // Igual que el backend: el valor ingresado se redondea antes de calcular.
+    const value = round(bonusValue);
     const gross = round(
-      bonusTypeId === BonusTypes.FixedAmount
-        ? bonusValue
-        : (employee.monthlySalary * bonusValue) / 100,
+      bonusTypeId === BonusTypes.FixedAmount ? value : (employee.monthlySalary * value) / 100,
     );
     const tax = round((gross * employee.taxRate) / 100);
     return { gross, tax, net: round(gross - tax) };

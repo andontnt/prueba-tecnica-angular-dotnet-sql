@@ -1,3 +1,4 @@
+using BonusTest.Domain.Common;
 using BonusTest.Domain.Constants;
 
 namespace BonusTest.Domain.Entities;
@@ -34,13 +35,10 @@ public class Bonus
     /// </summary>
     public void CalculateAmounts()
     {
-        GrossAmount = Round(BonusTypeId == BonusTypes.FixedAmount
+        GrossAmount = Money.Round(BonusTypeId == BonusTypes.FixedAmount
             ? BonusValue
             : MonthlySalary * BonusValue / 100);
-        TaxAmount = Round(GrossAmount * TaxRate / 100);
+        TaxAmount = Money.Round(GrossAmount * TaxRate / 100);
         NetAmount = GrossAmount - TaxAmount;
     }
-
-    // Redondeo a 2 decimales con el medio hacia arriba: 0.125 -> 0.13.
-    private static decimal Round(decimal value) => Math.Round(value, 2, MidpointRounding.AwayFromZero);
 }

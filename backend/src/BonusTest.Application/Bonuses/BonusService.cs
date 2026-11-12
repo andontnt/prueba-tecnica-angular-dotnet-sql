@@ -1,5 +1,6 @@
 using System.Globalization;
 using BonusTest.Application.Common;
+using BonusTest.Domain.Common;
 using BonusTest.Domain.Constants;
 using BonusTest.Domain.Entities;
 using BonusTest.Domain.Exceptions;
@@ -42,13 +43,16 @@ public class BonusService(IBonusRepository repository)
         if (!await repository.IsReasonActiveAsync(request.ReasonCode, cancellationToken))
             throw new BusinessException("REASON_INACTIVE", "El motivo no existe o no está activo.");
 
+        // Se redondea antes de validar: el valor guardado (DECIMAL(16,2)) es el mismo que se valida y se calcula.
+        var bonusValue = Money.Round(request.BonusValue);
+
         // Monto fijo: > 0 y <= sueldo. Porcentaje: > 0 y <= 100.
         if (request.BonusTypeId == BonusTypes.FixedAmount)
         {
-            if (request.BonusValue <= 0 || request.BonusValue > employee.MonthlySalary)
+            if (bonusValue <= 0 || bonusValue > employee.MonthlySalary)
                 throw new BusinessException("AMOUNT_INVALID", "El monto debe ser mayor a 0 y no mayor al sueldo mensual.");
         }
-        else if (request.BonusValue <= 0 || request.BonusValue > 100)
+        else if (bonusValue <= 0 || bonusValue > 100)
         {
             throw new BusinessException("PERCENTAGE_INVALID", "El porcentaje debe ser mayor a 0 y hasta 100.");
         }
@@ -62,7 +66,7 @@ public class BonusService(IBonusRepository repository)
             EmployeeNumber = employee.EmployeeNumber,
             Period = request.Period,
             BonusTypeId = request.BonusTypeId,
-            BonusValue = request.BonusValue,
+            BonusValue = bonusValue,
             ReasonCode = request.ReasonCode,
             MonthlySalary = employee.MonthlySalary,
             TaxRate = employee.TaxRate,
