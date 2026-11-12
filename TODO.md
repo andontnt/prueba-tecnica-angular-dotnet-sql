@@ -197,8 +197,8 @@ anterior. Los pasos marcados **(Usuario)** los ejecuta el usuario.
 
 - [ ] **E.1** Pruebas unitarias xUnit de `Bonus.CalculateAmounts` (ejemplo del PDF,
       redondeo 0.125 -> 0.13, retención 0 %).
-- [ ] **E.2** Pagar bono:
-  - Tabla `BonusProjectDistribution` en `03_*.sql`
+- [x] **E.2** Pagar bono:
+  - Tabla `BonusProjectDistribution` en `03_bonus_project_distribution.sql`
   - `POST /api/v1/Bonus/{id}/pay`
   - Reparto proporcional a las horas (el último proyecto cuadra la diferencia)
   - Estado 0202, todo en una transacción
