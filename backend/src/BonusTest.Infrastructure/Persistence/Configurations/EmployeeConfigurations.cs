@@ -13,6 +13,8 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
         builder.Property(x => x.MonthlySalary).HasPrecision(16, 2);
         builder.Property(x => x.TaxRate).HasPrecision(5, 2);
 
+        builder.HasOne(x => x.Department).WithMany().HasForeignKey(x => x.DepartmentCode);
+
         builder.HasMany(x => x.ProjectHours)
             .WithOne()
             .HasForeignKey(x => new { x.DepartmentCode, x.EmployeeNumber });
