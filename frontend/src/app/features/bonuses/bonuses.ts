@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -5,8 +6,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { BonusListItem } from '../../core/models/bonus';
-import { MasterStateCodes } from '../../core/models/catalog';
+import { BonusTypes, MasterStateCodes } from '../../core/models/catalog';
 import { PagedResponse } from '../../core/models/paged-response';
 import { BonusApi } from '../../core/services/bonus-api';
 import { CatalogApi } from '../../core/services/catalog-api';
@@ -25,6 +27,8 @@ const PAGE_SIZE = 10;
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatTableModule,
+    DecimalPipe,
   ],
   templateUrl: './bonuses.html',
   styleUrl: './bonuses.css',
@@ -47,6 +51,20 @@ export class Bonuses {
   });
 
   protected readonly bonuses = signal<PagedResponse<BonusListItem> | null>(null);
+
+  protected readonly bonusTypes = BonusTypes;
+  protected readonly columns = [
+    'state',
+    'period',
+    'employee',
+    'employeeName',
+    'bonusType',
+    'bonusValue',
+    'reason',
+    'grossAmount',
+    'taxAmount',
+    'netAmount',
+  ];
 
   constructor() {
     this.search();

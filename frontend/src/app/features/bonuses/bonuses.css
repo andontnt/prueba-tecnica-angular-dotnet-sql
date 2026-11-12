@@ -27,6 +27,17 @@
   gap: 8px;
 }
 
-.placeholder {
+.table-container {
+  overflow-x: auto;
+}
+
+.numeric {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.empty {
+  padding: 24px 16px;
+  text-align: center;
   color: var(--text-muted);
 }
