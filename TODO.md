@@ -109,10 +109,11 @@ anterior. Los pasos marcados **(Usuario)** los ejecuta el usuario.
     `Select` a `BonusListItemDto` (paginación en BD)
   - Lecturas con `AsNoTracking`; `GetByIdAsync` con tracking para poder
     actualizar
-  - `SaveChangesAsync`: si SQL lanza violación del índice único (2601/2627) ->
-    `BusinessException BONUS_DUPLICATED` (cubre dos registros simultáneos)
 - [x] **4.5** `DependencyInjection.cs`:
       `services.AddScoped<IBonusRepository, BonusRepository>();`
+- [ ] **4.6** `SaveChangesAsync`: si SQL lanza violación del índice único
+      (2601/2627) -> `BusinessException BONUS_DUPLICATED` (cubre dos registros
+      simultáneos; hoy responde 500)
 
 ## Fase 5 - Api (`backend/src/BonusTest.Api`)
 
@@ -140,7 +141,7 @@ anterior. Los pasos marcados **(Usuario)** los ejecuta el usuario.
 
 ## Fase 6 - Frontend (`frontend/src/app`)
 
-- [ ] **6.0** Agregar Angular Material como librería de UI:
+- [x] **6.0** Agregar Angular Material como librería de UI:
   - `ng add @angular/material` (tema, tipografía y estilos globales)
   - Usar sus componentes en la pantalla y el modal (ver 6.4 y 6.5)
 - [x] **6.1** `core/models/bonus.ts`: interfaces `Employee`, `BonusListItem`,
@@ -153,23 +154,24 @@ anterior. Los pasos marcados **(Usuario)** los ejecuta el usuario.
 - [x] **6.4** Pantalla `/bonuses` (`bonuses.ts` / `.html` / `.css`):
   - Filtros con `mat-form-field` / `mat-select`: área, número de empleado,
     periodo (`input type="month"`), estado; botones Buscar y Limpiar
-  - Tabla con `mat-table`: acciones, estado, periodo, área-número, nombre,
-    tipo, monto o % (con "%"), motivo, bruto, retención, neto (pipe
-    `number:'1.2-2'`)
+  - Tabla con `mat-table`: estado, periodo, área-número, nombre, tipo, monto
+    o % (con "%"), motivo, bruto, retención, neto (pipe `number:'1.2-2'`) y
+    acciones (menú en la última columna)
   - Paginación de 10 con `mat-paginator` (muestra el total de registros); llama
     a la API en cada cambio de página
   - Acciones Anular / Eliminar habilitadas solo en 0201, con confirmación
     (`MatDialog`) antes de llamar
   - El botón "Nuevo registro" abre el modal
-- [x] **6.5** `features/bonuses/bonus-form-modal` (componente standalone abierto
-      con `MatDialog`):
+- [x] **6.5** `features/bonuses/bonus-form-dialog` (componente standalone
+      abierto con `MatDialog`):
   - Paso 1: área + número (`Validators.required`) -> Buscar -> muestra nombre,
     fecha de ingreso, sueldo, % retención
-  - Paso 2: periodo (máx. mes actual), tipo, monto/porcentaje (la etiqueta
-    cambia según el tipo; validadores > 0 y <= sueldo o <= 100), motivo (solo
-    activos)
+  - Paso 2: periodo (selector con `max` = mes actual; la regla la valida el
+    backend), tipo, monto/porcentaje (la etiqueta cambia según el tipo;
+    validadores `min` / `max`: > 0 y <= sueldo o <= 100), motivo (solo activos)
   - Vista previa de bruto / retención / neto mientras escribe
-  - Guardar -> al éxito emite `saved`, cierra y el padre refresca el listado
+  - Guardar -> al éxito cierra con `dialogRef.close(true)` y el padre refresca
+    el listado en `afterClosed()`
 - [x] **6.6** **(Usuario)** Levantar el front (`npm start`) y probar el flujo
       completo.
 
