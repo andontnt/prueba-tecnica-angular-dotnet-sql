@@ -74,6 +74,23 @@ public class BonusService(IBonusRepository repository)
         return bonus.BonusId;
     }
 
+    public async Task CancelAsync(int bonusId, string userCode, CancellationToken cancellationToken)
+    {
+        var bonus = await GetRegisteredBonusAsync(bonusId, cancellationToken);
+        bonus.BonusStateCode = BonusStates.Cancelled;
+        bonus.ModifiedBy = userCode;
+        bonus.ModifiedAt = DateTime.Now;
+        await repository.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(int bonusId, string userCode, CancellationToken cancellationToken)
+    {
+        var bonus = await GetRegisteredBonusAsync(bonusId, cancellationToken);
+        bonus.DeletedBy = userCode;
+        bonus.DeletedAt = DateTime.Now;
+        await repository.SaveChangesAsync(cancellationToken);
+    }
+
     // Solo se aceptan empleados Activos (0101). También lo usa el registro del bono.
     private async Task<Employee> GetActiveEmployeeAsync(string departmentCode, int employeeNumber, CancellationToken cancellationToken)
     {
@@ -84,5 +101,18 @@ public class BonusService(IBonusRepository repository)
             throw new BusinessException("EMPLOYEE_TERMINATED", "El empleado no está activo.");
 
         return employee;
+    }
+
+    private async Task<Bonus> GetRegisteredBonusAsync(int bonusId, CancellationToken cancellationToken)
+    {
+        var bonus = await repository.GetByIdAsync(bonusId, cancellationToken);
+
+        if (bonus is null || bonus.DeletedAt is not null)
+            throw new BusinessException("BONUS_NOT_FOUND", "El bono no existe.");
+
+        if (bonus.BonusStateCode != BonusStates.Registered)
+            throw new BusinessException("BONUS_NOT_REGISTERED", "Solo se puede anular o eliminar un bono en estado Registrado.");
+
+        return bonus;
     }
 }
