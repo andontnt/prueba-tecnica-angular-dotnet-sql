@@ -118,6 +118,10 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #actionsMenu="matMenu">
+            <button mat-menu-item (click)="pay(bonus)">
+              <mat-icon>payments</mat-icon>
+              <span>Pagar</span>
+            </button>
             <button mat-menu-item (click)="cancel(bonus)">
               <mat-icon>block</mat-icon>
               <span>Anular</span>

@@ -109,6 +109,17 @@ export class Bonuses {
       .subscribe(() => this.search());
   }
 
+  protected pay(bonus: BonusListItem): void {
+    this.confirmAndRun(
+      {
+        title: 'Pagar bono',
+        message: `¿Pagar el bono de ${bonus.employeeName} del periodo ${bonus.period}? El bruto se repartirá entre sus proyectos según las horas.`,
+        confirmText: 'Pagar',
+      },
+      this.bonusApi.pay(bonus.bonusId),
+    );
+  }
+
   protected cancel(bonus: BonusListItem): void {
     this.confirmAndRun(
       {
