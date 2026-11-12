@@ -99,6 +99,15 @@ public class BonusService(IBonusRepository repository)
         await repository.SaveChangesAsync(cancellationToken);
     }
 
+    // El reparto y el cambio a Pagado se guardan en un solo SaveChanges: EF Core lo ejecuta en una transacción.
+    public async Task PayAsync(int bonusId, string userCode, CancellationToken cancellationToken)
+    {
+        var bonus = await GetRegisteredBonusAsync(bonusId, cancellationToken);
+        var projects = await repository.GetProjectHoursAsync(bonus.DepartmentCode, bonus.EmployeeNumber, cancellationToken);
+        bonus.Pay(projects, userCode, DateTime.Now);
+        await repository.SaveChangesAsync(cancellationToken);
+    }
+
     // Solo se aceptan empleados Activos (0101). También lo usa el registro del bono.
     private async Task<Employee> GetActiveEmployeeAsync(string departmentCode, int employeeNumber, CancellationToken cancellationToken)
     {
@@ -119,7 +128,7 @@ public class BonusService(IBonusRepository repository)
             throw new BusinessException("BONUS_NOT_FOUND", "El bono no existe.");
 
         if (bonus.BonusStateCode != BonusStates.Registered)
-            throw new BusinessException("BONUS_NOT_REGISTERED", "Solo se puede anular o eliminar un bono en estado Registrado.");
+            throw new BusinessException("BONUS_NOT_REGISTERED", "Solo se puede anular, eliminar o pagar un bono en estado Registrado.");
 
         return bonus;
     }
