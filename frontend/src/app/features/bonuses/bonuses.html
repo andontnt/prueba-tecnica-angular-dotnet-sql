@@ -115,4 +115,13 @@
       </tr>
     </table>
   </div>
+
+  <mat-paginator
+    [length]="bonuses()?.totalRecords ?? 0"
+    [pageSize]="pageSize"
+    [pageIndex]="(bonuses()?.pageNumber ?? 1) - 1"
+    [hidePageSize]="true"
+    [showFirstLastButtons]="true"
+    (page)="loadPage($event.pageIndex + 1)"
+  />
 </section>

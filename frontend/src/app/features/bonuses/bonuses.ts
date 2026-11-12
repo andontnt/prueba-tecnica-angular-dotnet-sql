@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { BonusListItem } from '../../core/models/bonus';
@@ -26,6 +27,7 @@ const PAGE_SIZE = 10;
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatPaginatorModule,
     MatSelectModule,
     MatTableModule,
     DecimalPipe,
@@ -52,6 +54,7 @@ export class Bonuses {
 
   protected readonly bonuses = signal<PagedResponse<BonusListItem> | null>(null);
 
+  protected readonly pageSize = PAGE_SIZE;
   protected readonly bonusTypes = BonusTypes;
   protected readonly columns = [
     'state',
@@ -79,7 +82,7 @@ export class Bonuses {
     this.search();
   }
 
-  private loadPage(pageIndex: number): void {
+  protected loadPage(pageIndex: number): void {
     const { employeeNumber, ...filters } = this.filters.getRawValue();
     this.bonusApi
       .getBonuses({
