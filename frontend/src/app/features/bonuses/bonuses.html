@@ -1,7 +1,7 @@
 <section class="card">
   <header class="card-header">
     <h2>Bonos de desempeño</h2>
-    <button mat-flat-button type="button" disabled>Nuevo registro</button>
+    <button mat-flat-button type="button" (click)="openCreateDialog()">Nuevo registro</button>
   </header>
 
   <form class="filters" [formGroup]="filters" (ngSubmit)="search()">

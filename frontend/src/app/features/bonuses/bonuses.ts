@@ -18,6 +18,7 @@ import { PagedResponse } from '../../core/models/paged-response';
 import { BonusApi } from '../../core/services/bonus-api';
 import { CatalogApi } from '../../core/services/catalog-api';
 import { ConfirmDialog, ConfirmDialogData } from '../../shared/confirm-dialog/confirm-dialog';
+import { BonusFormDialog } from './bonus-form-dialog/bonus-form-dialog';
 
 const PAGE_SIZE = 10;
 
@@ -98,6 +99,14 @@ export class Bonuses {
         pageSize: PAGE_SIZE,
       })
       .subscribe((page) => this.bonuses.set(page));
+  }
+
+  protected openCreateDialog(): void {
+    this.dialog
+      .open(BonusFormDialog, { width: '800px', maxWidth: '95vw' })
+      .afterClosed()
+      .pipe(filter(Boolean))
+      .subscribe(() => this.search());
   }
 
   protected cancel(bonus: BonusListItem): void {
